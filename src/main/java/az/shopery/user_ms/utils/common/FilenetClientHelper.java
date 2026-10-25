@@ -1,0 +1,41 @@
+package az.shopery.user_ms.utils.common;
+
+import az.shopery.user_ms.client.FilenetClient;
+import java.util.Objects;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+@Component
+@RequiredArgsConstructor
+public class FilenetClientHelper {
+
+    private final FilenetClient filenetClient;
+
+    public byte[] getFile(UUID fileId) {
+        var response = filenetClient.getFile(fileId);
+
+        if (Objects.isNull(response.getBody()) || Objects.isNull(response.getBody().getData())) {
+            return null;
+        }
+
+        return response.getBody().getData().getContent();
+    }
+
+    public UUID saveFile(MultipartFile multipartFile) {
+        var response = filenetClient.saveFile(multipartFile);
+
+        if (Objects.isNull(response.getBody()) || Objects.isNull(response.getBody().getData())) {
+            return null;
+        }
+
+        return response.getBody().getData().getFileId();
+    }
+
+    public void deleteFile(UUID fileId) {
+        if (Objects.nonNull(fileId)) {
+            filenetClient.deleteFile(fileId);
+        }
+    }
+}
